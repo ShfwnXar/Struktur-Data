@@ -46,7 +46,7 @@ class PohonPencarianBiner:
         while stack:
             saat_ini = stack.pop()
             if saat_ini is not None:
-                if kunci.lower() in saat_ini.kunci.lower():
+                if kunci.lower() in str(saat_ini.kunci).lower():
                     hasil.append(saat_ini.data)
                 stack.append(saat_ini.kanan)
                 stack.append(saat_ini.kiri)
@@ -57,18 +57,21 @@ class PohonPencarianBiner:
 file_path = 'C:/Users/ASUS/PycharmProjects/pythonProject4/hargalaptop.csv'
 data_laptop = muat_data(file_path)
 
-# Membuat instance dari PohonPencarianBiner untuk produk dan perusahaan
+# Membuat instance dari PohonPencarianBiner untuk produk dan harga
 pohon_produk = PohonPencarianBiner()
-pohon_perusahaan = PohonPencarianBiner()
+pohon_harga = PohonPencarianBiner()
 
 # Memasukkan data ke dalam pohon
 for index, row in data_laptop.iterrows():
     pohon_produk.masukkan(row['Product'], row)
-    pohon_perusahaan.masukkan(row['Company'], row)
+    pohon_harga.masukkan(str(row['Price_in_euros']), row)
 
-# Fungsi untuk mencari data berdasarkan nama produk atau perusahaan menggunakan DFS
+# Fungsi untuk mencari data berdasarkan nama produk atau harga menggunakan DFS
 def dfs_cari_laptop(pohon, kata_kunci, jenis_pencarian):
+    start_time = time.time()  # Mulai penghitungan waktu
     hasil = pohon.dfs_cari(kata_kunci)
+    end_time = time.time()  # Akhir penghitungan waktu
+
     if hasil:
         print(f"Data yang cocok dengan {jenis_pencarian} yang mengandung '{kata_kunci}':")
         for item in hasil:
@@ -76,20 +79,24 @@ def dfs_cari_laptop(pohon, kata_kunci, jenis_pencarian):
     else:
         print(f"Tidak ditemukan data yang cocok dengan {jenis_pencarian} yang mengandung '{kata_kunci}'")
 
+    print(f"Waktu eksekusi: {end_time - start_time} detik")  # Tampilkan waktu eksekusi
+
 # Meminta input pengguna
-jenis_pencarian = input("Masukkan jenis pencarian ('nama device' atau 'Perusahaan pembuat'): ")
-kata_kunci = input(f"Masukkan nama {jenis_pencarian} yang ingin dicari: ")
+while True:
+    print("Masukkan jenis pencarian:")
+    print("1. Product")
+    print("2. Price_in_euros")
+    print("3. Akhiri program")
+    jenis_pencarian = input("Pilihan (1, 2, atau 3): ")
 
-# Mengukur waktu eksekusi pencarian
-start_time = time.time()
-if jenis_pencarian.lower() == 'nama device':
-    dfs_cari_laptop(pohon_produk, kata_kunci, jenis_pencarian)
-elif jenis_pencarian.lower() == 'perusahaan pembuat':
-    dfs_cari_laptop(pohon_perusahaan, kata_kunci, jenis_pencarian)
-else:
-    print("Jenis pencarian tidak valid. Silakan masukkan 'nama device' atau 'Perusahaan pembuat'.")
-end_time = time.time()
-
-# Menghitung dan mencetak waktu eksekusi
-execution_time = end_time - start_time
-print(f"Waktu eksekusi pencarian: {execution_time:.4f} detik")
+    if jenis_pencarian == '1':
+        kata_kunci = input("Masukkan Product yang ingin dicari: ")
+        dfs_cari_laptop(pohon_produk, kata_kunci, 'Product')
+    elif jenis_pencarian == '2':
+        kata_kunci = input("Masukkan Price_in_euros yang ingin dicari: ")
+        dfs_cari_laptop(pohon_harga, kata_kunci, 'Price_in_euros')
+    elif jenis_pencarian == '3':
+        print("Program berakhir.")
+        break
+    else:
+        print("Jenis pencarian tidak valid. Silakan masukkan '1', '2', atau '3'.")

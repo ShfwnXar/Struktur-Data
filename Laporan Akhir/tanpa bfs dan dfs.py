@@ -20,11 +20,34 @@ try:
         else:
             print(f"Tidak ditemukan data yang cocok dengan nama produk '{nama_produk}'")
 
-    # Meminta inputan pengguna
-    nama_produk = input("Masukkan nama produk yang ingin dicari: ")
+    # Fungsi untuk mencari data berdasarkan harga
+    def cari_laptop_berdasarkan_harga(harga):
+        hasil_pencarian = laptop_data[laptop_data['Price_in_euros'] == float(harga)]
+        if not hasil_pencarian.empty:
+            print(f"Data yang cocok dengan harga '{harga}':")
+            print(hasil_pencarian)
+        else:
+            print(f"Tidak ditemukan data yang cocok dengan harga '{harga}'")
 
-    # Pencarian data
-    cari_laptop_berdasarkan_nama(nama_produk)
+    # Meminta inputan pengguna
+    while True:
+        print("Masukkan jenis pencarian:")
+        print("1. Product")
+        print("2. Price_in_euros")
+        print("3. Akhiri program")
+        pilihan = input("Pilihan (1, 2, atau 3): ")
+
+        if pilihan == '1':
+            nama_produk = input("Masukkan nama produk yang ingin dicari: ")
+            cari_laptop_berdasarkan_nama(nama_produk)
+        elif pilihan == '2':
+            harga = input("Masukkan harga (Price_in_euros) yang ingin dicari: ")
+            cari_laptop_berdasarkan_harga(harga)
+        elif pilihan == '3':
+            print("Program berakhir.")
+            break
+        else:
+            print("Jenis pencarian tidak valid. Silakan masukkan '1', '2', atau '3'.")
 
 except FileNotFoundError:
     print(f"File di {file_path} tidak ditemukan. Silakan periksa jalurnya dan coba lagi.")
